@@ -13,6 +13,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -63,7 +64,6 @@ public class FileListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_list);
         ButterKnife.bind(this);
-        IAppliation.permissionManager.requestPermission(FileListActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE, 1, () -> init());
     }
 
     private void init() {
@@ -96,20 +96,27 @@ public class FileListActivity extends AppCompatActivity {
 
     @OnClick(R.id.searh_file)
     public void SearhFile() {
-        IAppliation.fileOs.pushStack(IAppliation.fileOs.getCurrentFloder());
         startActivity(new Intent(this, SearhFileActivity.class));
     }
 
     @OnClick(R.id.setting)
-    public void setSettingButton(){
+    public void setSettingButton() {
+        Intent intent = new Intent(this, SettingActivity.class);
+        startActivity(intent);
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        IAppliation.fileOs.pushStack(IAppliation.fileOs.getCurrentFloder());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        IAppliation.permissionManager.requestPermission(FileListActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE, 1, () -> init());
         if (!IAppliation.fileOs.fileStack.isEmpty()) {
-            IAppliation.fileOs.popStack();
+            IAppliation.fileOs.setCurrentFloder(IAppliation.fileOs.popStack());
         }
     }
 
@@ -124,4 +131,22 @@ public class FileListActivity extends AppCompatActivity {
             fileListAdapter.notifyDataSetChanged();
         }
     }
+//    private long firstTime = 0;
+//    @Override
+//    public boolean onKeyDown(int keyCode, KeyEvent event) {
+//        long secondTime = System.currentTimeMillis();
+//
+//        if (keyCode == KeyEvent.KEYCODE_BACK) {
+//            if (secondTime - firstTime < 2000) {
+//                System.exit(0);
+//            } else {
+//                Toast.makeText(getApplicationContext(), "再按一次返回键退出", Toast.LENGTH_SHORT).show();
+//                firstTime = System.currentTimeMillis();
+//            }
+//
+//            return true;
+//        }
+//        return super.onKeyDown(keyCode, event);
+//    }
+
 }

@@ -2,6 +2,12 @@ package com.example.wavplayer.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.style.BackgroundColorSpan;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +19,7 @@ import com.example.wavplayer.FloderManager.FileOsImpl;
 import com.example.wavplayer.IAppliation;
 import com.example.wavplayer.MainActivity;
 import com.example.wavplayer.R;
+import com.example.wavplayer.dao.FileSearchData;
 import com.example.wavplayer.dao.MessageEvent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -26,13 +33,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class SearchFileListAdapter extends RecyclerView.Adapter<SearchFileListAdapter.viewHolder> {
     public List<String> fileNames = new ArrayList<>();
-    public List<File> fileList = new ArrayList<>();
+    public List<FileSearchData> fileList = new ArrayList<>();
+    public List<File> files = new ArrayList<>();
+    public boolean flag = true;
     FileOsImpl fileOs = new FileOsImpl();
     Context context;
+    public int searchResultLength = 0;
+
     @NonNull
     @Override
     public viewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.file_show_search_item,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.file_show_search_item, parent, false);
         viewHolder viewHolder = new viewHolder(view);
         this.context = parent.getContext();
         return viewHolder;
@@ -40,17 +51,33 @@ public class SearchFileListAdapter extends RecyclerView.Adapter<SearchFileListAd
 
     @Override
     public void onBindViewHolder(@NonNull viewHolder holder, int position) {
-        holder.textView.setText(fileNames.get(position));
-        holder.fullDirectory.setText(fileList.get(position).getAbsolutePath());
+        if (flag == true) {
+            SpannableString spanString = new SpannableString(fileNames.get(position));
+            ForegroundColorSpan span = new ForegroundColorSpan(Color.RED);
+            spanString.setSpan(span, fileList.get(position).getStart(), fileList.get(position).getStart() + searchResultLength,
+                    Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+            holder.textView.setText(spanString);
+            holder.fullDirectory.setText(fileList.get(position).getFile().getAbsolutePath());
+        } else {
+            holder.textView.setText(fileNames.get(position));
+            holder.fullDirectory.setText(files.get(position).getAbsolutePath());
+        }
+
         holder.itemView.setOnClickListener(v -> {
-            Log.d("xiao",fileNames.get(position));
-            if (fileList.get(position).isDirectory() == true) {
-                fileOs.setCurrentFloder(fileList.get(position));
-                fileList = fileOs.getFiles();
-                fileNames = IAppliation.fileOs.getFilesName();
+            Log.d("xiao", fileNames.get(position));
+            if (fileList.get(position).getFile().isDirectory()) {
+                Log.d("xiaotao","click in");
+                fileOs.setCurrentFloder(fileList.get(position).getFile());
+                fileNames = fileOs.getFilesName();
+                flag = false;
+                files = fileOs.getFiles();
                 notifyDataSetChanged();
             } else {
-                EventBus.getDefault().postSticky(new MessageEvent(fileList.get(position).getAbsolutePath(),position));
+                if(flag==true){
+                    EventBus.getDefault().postSticky(new MessageEvent(fileList.get(position).getFile().getAbsolutePath(), position));
+                }else {
+                    EventBus.getDefault().postSticky(new MessageEvent(files.get(position).getAbsolutePath(),position));
+                }
                 context.startActivity(new Intent(context, MainActivity.class));
             }
         });
@@ -61,10 +88,11 @@ public class SearchFileListAdapter extends RecyclerView.Adapter<SearchFileListAd
         return fileNames.size();
     }
 
-    class viewHolder extends RecyclerView.ViewHolder{
+    class viewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
         TextView textView;
         TextView fullDirectory;
+
         public viewHolder(@NonNull View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.file_box);

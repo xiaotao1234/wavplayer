@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Environment;
 import android.util.Log;
 
+import com.example.wavplayer.dao.FileSearchData;
 import com.example.wavplayer.dao.FileSearchMassage;
 
 import org.greenrobot.eventbus.EventBus;
@@ -159,23 +160,21 @@ public class FileOsImpl {
         thread.start();
     }
 
-    public List<File> searchInThisFloder(File file, String key) {//在文件夹内递归搜索相应文件
-        List<File> thisPartResult = new ArrayList<>();
-        List<Integer> startFind = new ArrayList<>();
+    public List<FileSearchData> searchInThisFloder(File file, String key) {//在文件夹内递归搜索相应文件
+        List<FileSearchData> thisPartResult = new ArrayList<>();
         if (file.isDirectory()) {
             for (File file1 : file.listFiles()) {
-                if (file1.getName().toLowerCase().contains(key.toLowerCase().trim())){
-                    startFind.add(file1.getName().toLowerCase().indexOf(key.toLowerCase().trim()));
-                    thisPartResult.add(file1);
+                if (file1.getName().toLowerCase().contains(key)&&file1.isDirectory()){
+                    thisPartResult.add(new FileSearchData(file1,file1.getName().toLowerCase().indexOf(key)));
                 }
                 thisPartResult.addAll(searchInThisFloder(file1, key));
             }
         } else {
-            if (file.getName().toLowerCase().contains(key.toLowerCase().trim())){
-                thisPartResult.add(file);
+            if (file.getName().toLowerCase().contains(key)){
+                thisPartResult.add(new FileSearchData(file,file.getName().toLowerCase().indexOf(key)));
             }
-            return thisPartResult;
         }
+        Log.d("xiaoxiao", String.valueOf(thisPartResult.size()));
         return thisPartResult;
     }
 }

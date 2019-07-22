@@ -11,11 +11,11 @@ import android.text.Editable;
 import android.view.View;
 import android.widget.EditText;
 import com.example.wavplayer.adapter.SearchFileListAdapter;
+import com.example.wavplayer.dao.FileSearchData;
 import com.example.wavplayer.dao.FileSearchMassage;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +25,7 @@ public class SearhFileActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     @BindView(R.id.search_edit)
     EditText editText;
+    int searchTextLength;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,15 +49,18 @@ public class SearhFileActivity extends AppCompatActivity {
 
     @OnTextChanged(value = R.id.search_edit, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     void afterTextChanged(Editable s) {
-        IAppliation.fileOs.searh(IAppliation.fileOs.getCurrentFloder(), s.toString());
+        searchFileListAdapter.flag = true;
+        searchTextLength = s.toString().toLowerCase().trim().length();
+        searchFileListAdapter.searchResultLength = searchTextLength;
+        IAppliation.fileOs.searh(IAppliation.fileOs.getCurrentFloder(), s.toString().toLowerCase().trim());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void showSearchResult(FileSearchMassage fileSearchResult) {
-        List<File> files = fileSearchResult.getFiles();
+        List<FileSearchData> files = fileSearchResult.getFiles();
         List<String> filename = new ArrayList<>();
-        for (File file:files){
-            filename.add(file.getName());
+        for (FileSearchData file:files){
+            filename.add(file.getFile().getName());
         }
         searchFileListAdapter.fileList = files;
         searchFileListAdapter.fileNames = filename;

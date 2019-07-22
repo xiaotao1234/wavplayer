@@ -1,23 +1,22 @@
 package com.example.wavplayer.dao;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FileSearchMassage {
 
-    public FileSearchMassage(List<File> files) {
+    public FileSearchMassage(List<FileSearchData> files) {
         this.files = files;
     }
 
-    public void setFiles(List<File> files) {
+    public void setFiles(List<FileSearchData> files) {
         this.files = files;
     }
 
-    public List<File> getFiles() {
+    public List<FileSearchData> getFiles() {
         return files;
     }
 
-    private List<File> files = new ArrayList<>();
+    private List<FileSearchData> files = new ArrayList<>();
 
 }

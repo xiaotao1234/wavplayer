@@ -3,15 +3,10 @@ package com.example.wavplayer.dao;
 import java.io.File;
 
 public class FileSearchData {
-    public void setFile(File file) {
-        this.file = file;
-    }
-
-    public void setStart(int start) {
-        this.start = start;
-    }
 
     File file;
+
+    int start;
 
     public FileSearchData(File file, int start) {
         this.file = file;
@@ -26,5 +21,11 @@ public class FileSearchData {
         return start;
     }
 
-    int start;
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+    public void setStart(int start) {
+        this.start = start;
+    }
 }

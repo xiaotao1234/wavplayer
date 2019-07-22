@@ -73,10 +73,11 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.viewho
             holder.imageView.setImageResource(R.drawable.floder_icon);
         }
         holder.itemView.setOnClickListener(v -> {
-            Log.d("xiaotao","click in");
-            IAppliation.fileOs.pushStack(currentFile);
+            currentFile = IAppliation.fileOs.getCurrentFloder();
             if (files.get(position).isDirectory() == true) {
-                IAppliation.fileOs.setCurrentFloder(files.get(position));
+                IAppliation.fileOs.pushStack(currentFile);
+                currentFile = files.get(position);
+                IAppliation.fileOs.setCurrentFloder(currentFile);
                 files = IAppliation.fileOs.getFiles();
                 filesname = IAppliation.fileOs.getFilesName();
                 notifyDataSetChanged();
