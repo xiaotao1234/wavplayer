@@ -35,31 +35,31 @@ public class FileOsImpl {
     public FileOsImpl() {
     }
 
-    public static FileOsImpl getInstance() {
+    public static FileOsImpl getInstance() { //单例获取实例
         if (fileOsImpl == null) {
             fileOsImpl = new FileOsImpl();
         }
         return fileOsImpl;
     }
 
-    public Stack<File> getFileStack() {
+    public Stack<File> getFileStack() {  //获得路径记录栈
         return fileStack;
     }
 
-    public void pushStack(File file) {
+    public void pushStack(File file) {  //路径记录栈的入栈
         fileStack.push(file);
         Log.d("stack_os_in", fileStack.toString());
     }
 
 
-    public File popStack() {
+    public File popStack() {  //路径记录栈的出栈
         File file = fileStack.pop();
         Log.d("stack_os_out", fileStack.toString());
         return file;
     }
 
 
-    public File getOsDicteoryPath(Context context) {
+    public File getOsDicteoryPath(Context context) {  //获得初始根目录地址
         SharedPreferences sharedPreferences = context.getSharedPreferences("User",Context.MODE_PRIVATE);
         String filepatc = sharedPreferences.getString("RootDirectory",Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath());
         OsDicteoryPath = new File(filepatc);
@@ -72,11 +72,11 @@ public class FileOsImpl {
     }
 
 
-    public File getCurrentFloder() {
+    public File getCurrentFloder() {  //获得当前目录的目录名
         return currentFloder;
     }
 
-    public void setCurrentFloder(File floder) {
+    public void setCurrentFloder(File floder) {  //设置当前文件目录，设置后会自动设置当前目录文件列表和文件名列表
         if (floder != null) {
             currentFloder = floder;
             if (files != null) {
@@ -92,7 +92,7 @@ public class FileOsImpl {
         }
     }
 
-    public List<File> getFiles() {
+    public List<File> getFiles() {  //获得当前目录下的所有文件
         return files;
     }
 
@@ -106,7 +106,7 @@ public class FileOsImpl {
         }
     }
 
-    public void setOsDicteoryPath(File file) {
+    public void setOsDicteoryPath(File file) {  //设置根目录地址
         if (file != null && file.exists()) {
             OsDicteoryPath = file;
         }
@@ -118,7 +118,7 @@ public class FileOsImpl {
         }
     }
 
-    public void setCurrentFile(File currentFile) {
+    public void setCurrentFile(File currentFile) {  //获得当前被选择的文件
         this.currentFile = currentFile;
     }
 
@@ -126,18 +126,18 @@ public class FileOsImpl {
         return currentFile;
     }
 
-    public List<File> getSelectedFiles() {
+    public List<File> getSelectedFiles() {  //获得被选中的文件目录
         return selectedFiles;
     }
 
-    public void createFloder(String name) {
-        File file = new File(currentFloder.getAbsolutePath() + File.separator + name);
-        if (file.exists() == false) {
-            if (file.mkdirs()) ;
-        }
-    }
+//    public void createFloder(String name) {
+//        File file = new File(currentFloder.getAbsolutePath() + File.separator + name);
+//        if (file.exists() == false) {
+//            if (file.mkdirs()) ;
+//        }
+//    }
 
-    public void addFloder(String floderName) {
+    public void addFloder(String floderName) {          //添加文件夹
         File addFile = new File(currentFloder.getAbsolutePath() + File.separator + floderName);
         if (!addFile.exists()) {
             addFile.mkdirs();
@@ -148,7 +148,7 @@ public class FileOsImpl {
         return filesName;
     }
 
-    public void searh(File file, String key) {
+    public void searh(File file, String key) {    //查找相关文件
         Runnable runnable = () -> {
             long time = System.currentTimeMillis();
             FileSearchMassage fileSearchResult = new FileSearchMassage(searchInThisFloder(file, key));
@@ -160,7 +160,7 @@ public class FileOsImpl {
         thread.start();
     }
 
-    public List<FileSearchData> searchInThisFloder(File file, String key) {//在文件夹内递归搜索相应文件
+    public List<FileSearchData> searchInThisFloder(File file, String key) {             //在文件夹内递归搜索相应文件
         List<FileSearchData> thisPartResult = new ArrayList<>();
         if (file.isDirectory()) {
             for (File file1 : file.listFiles()) {

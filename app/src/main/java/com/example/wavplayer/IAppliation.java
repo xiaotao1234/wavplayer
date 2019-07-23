@@ -5,6 +5,7 @@ import com.example.wavplayer.FloderManager.FileOsImpl;
 import com.example.wavplayer.tools.PermissionManager;
 import com.example.wavplayer.tools.TimeTools;
 
+
 public class IAppliation extends Application {
     public static FileOsImpl fileOs;
     public static TimeTools timeTools;
