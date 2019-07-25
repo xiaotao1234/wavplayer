@@ -96,13 +96,12 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.viewho
                 IAppliation.fileOs.setCurrentFloder(files.get(position));
                 files = IAppliation.fileOs.getFiles();
                 filesname = IAppliation.fileOs.getFilesName();
+                IAppliation.fileOs.fileStack.clear();
                 notifyDataSetChanged();
             }else {
                 Toast.makeText(context,"不能使用文件作为主目录",Toast.LENGTH_SHORT).show();
             }
             return true;
         });
-        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
-
     }
 }
